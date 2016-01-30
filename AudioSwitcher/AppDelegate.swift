@@ -13,7 +13,7 @@ import CoreAudio
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     let statusItem = NSStatusBar.systemStatusBar().statusItemWithLength(NSVariableStatusItemLength)
-    var previousOutputDevices: [EZAudioDevice]!
+    var previousOutputDevices: [AudioDeviceID]!
     let menu: NSMenu = NSMenu()
     
     func applicationDidFinishLaunching(aNotification: NSNotification) {
@@ -121,7 +121,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @IBAction func switchAudioDevice(sender: AnyObject) {
-        let device = AudioDeviceID((sender.representedObject as! EZAudioDevice).deviceID)
+        let device = AudioDeviceID(sender.representedObject as! Int)
         setDevice(device)
     }
     
@@ -155,17 +155,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
             index += 1
         }
+    }
+    
+    func getDefaultAudioOutputDevice () -> AudioObjectID {
         
-        // Utility function to get default audio output device:
-        func getDefaultAudioOutputDevice () -> AudioObjectID {
-            
-            var devicePropertyAddress = AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyDefaultOutputDevice, mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMaster)
-            var deviceID: AudioObjectID = 0
-            var dataSize = UInt32(truncatingBitPattern: sizeof(AudioDeviceID))
-            let systemObjectID = AudioObjectID(bitPattern: kAudioObjectSystemObject)
-            if (kAudioHardwareNoError != AudioObjectGetPropertyData(systemObjectID, &devicePropertyAddress, 0, nil, &dataSize, &deviceID)) { return 0 }
-            return deviceID
-        }
+        var devicePropertyAddress = AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyDefaultOutputDevice, mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMaster)
+        var deviceID: AudioObjectID = 0
+        var dataSize = UInt32(truncatingBitPattern: sizeof(AudioDeviceID))
+        let systemObjectID = AudioObjectID(bitPattern: kAudioObjectSystemObject)
+        if (kAudioHardwareNoError != AudioObjectGetPropertyData(systemObjectID, &devicePropertyAddress, 0, nil, &dataSize, &deviceID)) { return 0 }
+        return deviceID
     }
     
     func refreshMenu() {
@@ -174,7 +173,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func checkForNewDevices() -> Bool {
-        let outputDevices: [EZAudioDevice] = EZAudioDevice.outputDevices() as! [EZAudioDevice]
+        let outputDevices: [AudioDeviceID] = getOutputDevices()
         
         if(self.previousOutputDevices == nil) {
             self.previousOutputDevices = outputDevices
@@ -191,15 +190,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func addMenuItems() -> Void {
-        let outputDevices: [EZAudioDevice] = EZAudioDevice.outputDevices() as! [EZAudioDevice]
+        let devices = getOutputDevices()
         
-        for device in outputDevices {
-            let menuItem = NSMenuItem(title: device.name, action: Selector("switchAudioDevice:"), keyEquivalent: "")
-            menuItem.representedObject = device
+        for device in devices {
+            let deviceName = getAudioDeviceName(device)
+            let menuItem = NSMenuItem(title: deviceName, action: Selector("switchAudioDevice:"), keyEquivalent: "")
+            
+            menuItem.representedObject = Int(device)
             self.menu.addItem(menuItem)
         }
         
-        menu.itemWithTitle(EZAudioDevice.currentOutputDevice().name)?.state = NSOnState
+        menu.itemWithTitle(getAudioDeviceName(getDefaultAudioOutputDevice()))?.state = NSOnState
         
         let openAtLaunchBtn: NSMenuItem = NSMenuItem(title: "Open at Login", action: Selector("toggleLaunchAtStartup"), keyEquivalent: "")
         openAtLaunchBtn.state = checkIfLaunchAtStartup() ? NSOnState : NSOffState
@@ -208,6 +209,32 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         let quitBtn: NSMenuItem = NSMenuItem(title: "Quit", action: Selector("quit"), keyEquivalent: "Q")
         self.menu.addItem(quitBtn)
+    }
+    
+    func getAudioDeviceID(deviceName: String) -> AudioDeviceID {
+        return getRequestedDeviceID(strdup(deviceName.cStringUsingEncoding(NSUTF8StringEncoding)!))
+    }
+    
+    func getAudioDeviceName(deviceId: AudioDeviceID) -> String {
+        /* DO NOT REMOVE THIS PRINT STATEMENT IT WILL CRASH THE PROGRAM FOR SOME REASON */
+        print (deviceId)
+        /* ---------------------------------------------------------------------------- */
+        let deviceName = getDeviceName2(deviceId)
+        return String.fromCString(deviceName)!
+    }
+    
+    func getOutputDevices() -> [AudioDeviceID] {
+        var res: [AudioDeviceID] = []
+        let devices: UnsafeMutablePointer<UnsafeMutablePointer<Int8>> = getDevices()
+        
+        var i = 0
+        while devices[i] != nil {
+            let deviceName: String = String.fromCString(devices[i])!
+            let deviceId = getAudioDeviceID(deviceName)
+            res.append(deviceId)
+            i++
+        }
+        return res
     }
     
     func quit() {
