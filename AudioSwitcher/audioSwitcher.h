@@ -6,6 +6,6 @@
 //  Copyright © 2016 Case Wright. All rights reserved.
 //
 
-#import <CoreAudio/CoreAudio.h>
+#include <CoreAudio/CoreAudio.h>
 
 void setDevice(AudioDeviceID newDeviceID);

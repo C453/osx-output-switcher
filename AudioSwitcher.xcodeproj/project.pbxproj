@@ -10,11 +10,7 @@
 		272FC6B41C5C5FDB00BD31E1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272FC6B31C5C5FDB00BD31E1 /* AppDelegate.swift */; };
 		272FC6B81C5C5FDB00BD31E1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 272FC6B71C5C5FDB00BD31E1 /* Assets.xcassets */; };
 		272FC6BB1C5C5FDB00BD31E1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 272FC6B91C5C5FDB00BD31E1 /* Main.storyboard */; };
-		272FC6C81C5C66E000BD31E1 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 272FC6C71C5C66E000BD31E1 /* CoreAudio.framework */; };
-		272FC6CA1C5C67B200BD31E1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 272FC6C91C5C67B200BD31E1 /* AudioToolbox.framework */; };
-		272FC6CC1C5C69E700BD31E1 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 272FC6CB1C5C69E700BD31E1 /* CoreServices.framework */; };
 		272FC6D21C5C7B9800BD31E1 /* audioSwitcher.c in Sources */ = {isa = PBXBuildFile; fileRef = 272FC6D11C5C7B9800BD31E1 /* audioSwitcher.c */; };
-		27FBF9141C5C7F7600E26C9F /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27FBF9131C5C7F7600E26C9F /* AVFoundation.framework */; };
 		9BDFEC8A07DF504C3ACA31F8 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19190AD82D053A537CA8A0C0 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -41,10 +37,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				27FBF9141C5C7F7600E26C9F /* AVFoundation.framework in Frameworks */,
-				272FC6CC1C5C69E700BD31E1 /* CoreServices.framework in Frameworks */,
-				272FC6CA1C5C67B200BD31E1 /* AudioToolbox.framework in Frameworks */,
-				272FC6C81C5C66E000BD31E1 /* CoreAudio.framework in Frameworks */,
 				9BDFEC8A07DF504C3ACA31F8 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -330,9 +322,11 @@
 			baseConfigurationReference = 0C64B81F6B9ED0CE89F27917 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = AudioSwitcher/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.C453.AudioSwitcher;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "AudioSwitcher/Bridging-Header.h";
@@ -344,9 +338,11 @@
 			baseConfigurationReference = 4B35A92B7895155E704F28A8 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = AudioSwitcher/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.C453.AudioSwitcher;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "AudioSwitcher/Bridging-Header.h";
